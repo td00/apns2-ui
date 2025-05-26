@@ -1,0 +1,6 @@
+[auth]
+password = Zm9vYmFyCg==
+
+[server]
+url = https://example.com/api/notify
+token = dein_bearer_token
