@@ -8,3 +8,6 @@ token = foobar23
 [server]
 url = https://server1.notify.example.com/api/customnotify
 token = foobar42
+
+[api]
+token = supersecretapitoken
