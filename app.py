@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 import configparser
 import base64
 import requests
+import datetime
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
@@ -162,6 +163,55 @@ def api_notify():
         })
 
     return jsonify(result), 200
+
+@app.route('/api/demonotify', methods=['POST'])
+def api_demonotify():
+    # Authorization prüfen
+    auth_header = request.headers.get('Authorization', '')
+    if not auth_header.startswith('Bearer '):
+        return jsonify({"error": "Kein gültiger Authorization Header"}), 401
+
+    token = auth_header.split(' ')[1]
+    if token != API_TOKEN:
+        return jsonify({"error": "Ungültiger Token"}), 403
+
+    # JSON einlesen und validieren
+    try:
+        payload = request.get_json()
+        message = payload['message']
+        platform = message['platform']
+        title = message['title']
+        text = message['message']
+    except (TypeError, KeyError):
+        return jsonify({"error": "Ungültige JSON-Struktur"}), 400
+
+    data = {
+        "severity": "info",
+        "notification_title": title,
+        "notification_text": text
+    }
+
+    # Logik für Simulation
+    log_lines = [
+        f"[{datetime.datetime.now().isoformat()}] Received JSON Payload: {payload}"
+    ]
+
+    if platform in ['all', 'apple']:
+        log_lines.append(f"Send Notification to server: {data}")
+
+    if platform in ['all', 'android']:
+        log_lines.append(f"Send Notification to server2: {data}")
+
+    # In Demo.log schreiben
+    try:
+        with open("Demo.log", "a", encoding="utf-8") as logfile:
+            for line in log_lines:
+                logfile.write(line + "\n")
+    except Exception as e:
+        return jsonify({"error": f"Fehler beim Schreiben der Logdatei: {str(e)}"}), 500
+
+    return jsonify({"status": "Demo notification logged", "logged": log_lines}), 200
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
