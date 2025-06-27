@@ -20,15 +20,39 @@
             </select>
         </div>
         <div class="mb-3">
+            <label class="form-label">Titel</label>
+            <input type="text" class="form-control" name="notification_title" required>
+        </div>
+        <div class="mb-3">
             <label class="form-label">Nachricht</label>
-            <textarea class="form-control" name="notification" required></textarea>
+            <textarea class="form-control" name="notification_text" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Plattform</label><br>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="platform" value="apple" id="apple" checked>
+                <label class="form-check-label" for="apple">Apple</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="platform" value="android" id="android" checked>
+                <label class="form-check-label" for="android">Android</label>
+            </div>
         </div>
         <button type="submit" class="btn btn-success">Senden</button>
     </form>
 
     {% if result %}
-        <div class="mt-4 alert {{ 'alert-success' if result.get('message') else 'alert-danger' }}">
-            {{ result.get('message') or result.get('error') }}
+        <div class="mt-4">
+            <h4>Antworten:</h4>
+            {% for res in result.responses %}
+                <div class="alert alert-info">
+                    <strong>{{ res.platform }}:</strong>
+                    <pre>{{ res.response | tojson(indent=2) }}</pre>
+                </div>
+            {% endfor %}
+            {% if not result.responses %}
+                <div class="alert alert-warning">Keine Plattform ausgewählt. Keine Nachricht gesendet.</div>
+            {% endif %}
         </div>
     {% endif %}
 </div>
