@@ -1,6 +1,10 @@
 [auth]
-password = Zm9vYmFyCg==
+password = base64encodedpassword
+
+[server2]
+url = https://server2.notify.example.com/send_notification
+token = foobar23
 
 [server]
-url = https://example.com/api/notify
-token = dein_bearer_token
+url = https://server1.notify.example.com/api/customnotify
+token = foobar42
